@@ -1,5 +1,7 @@
 #include "Scene_plane_item.h"
 #include <QApplication>
+#include <CGAL/Three/Three.h>
+
 using namespace CGAL::Three;
 
 
@@ -84,7 +86,7 @@ void Scene_plane_item::compute_normals_and_vertices(void) const
     float x = (2*diag)/10.0;
     float y = (2*diag)/10.0;
     {
-        for(int u = 0; u < 11; u++)
+        for(float u = 0; u < 11; u += 1.f)
         {
 
             positions_lines.push_back(-diag + x* u);
@@ -95,7 +97,7 @@ void Scene_plane_item::compute_normals_and_vertices(void) const
             positions_lines.push_back(diag        );
             positions_lines.push_back(0.0         );
         }
-        for(int v=0; v<11; v++)
+        for(float v=0; v<11; v += 1.f)
         {
 
             positions_lines.push_back(-diag        );
@@ -186,7 +188,10 @@ Scene_plane_item* Scene_plane_item::clone() const {
 }
 
 QString Scene_plane_item::toolTip() const {
-  const CGAL::qglviewer::Vec& pos = frame->position();
+  
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  
+  const CGAL::qglviewer::Vec& pos = frame->position() - offset;
   const CGAL::qglviewer::Vec& n = frame->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
   return
     tr("<p><b>%1</b> (mode: %2, color: %3)<br />")
